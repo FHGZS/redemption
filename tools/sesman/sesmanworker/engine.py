@@ -619,10 +619,27 @@ class Engine(object):
                 return string if case_sensitive else string.lower()
 
             if (not fc(group_filter) in fc(target_info.group)
-                or not fc(device_filter) in fc(temp_service_login)
                 or not fc(protocol_filter) in fc(temp_resource_service_protocol_cn)):
                 item_filtered = True
                 continue
+            if not device_filter.startswith('$') : # apply target global filter mode
+                if not fc(device_filter) in fc(temp_service_login) :
+                    item_filtered = True
+                    continue
+            else : # apply target accurate filter mode
+                try :
+                    from . import targetaccuratefilter as taf
+
+                    target_field_dict = taf.get_target_field_dict(
+                        fc(temp_service_login))
+                    
+                    if not taf.is_filterable(fc(device_filter),
+                                             target_field_dict) :
+                        item_filtered = True
+                        continue
+                except (RuntimeError, ValueError) :
+                    item_filtered = True
+                    continue
 
             targets.append((target_info.group,  # ( = concatenated list)
                             temp_service_login,
