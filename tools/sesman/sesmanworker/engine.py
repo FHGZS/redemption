@@ -629,9 +629,19 @@ class Engine(object):
             else : # apply target accurate filter mode
                 try :
                     from . import targetaccuratefilter as taf
-
-                    target_field_dict = taf.get_target_field_dict(
-                        fc(temp_service_login))
+                    
+                    target_login_domain = target_info.target_login.split('@')
+                    target_login_real = target_login_domain[0]
+                    target_domain_real = (target_login_domain[1]
+                                          if len(target_login_domain) > 1
+                                          else "")
+                    target_device = target_info.target_name
+                    target_service = target_info.service_name
+                    target_field_dict = {
+                        "account" : fc(target_login_real),
+                        "domain" : fc(target_domain_real),
+                        "device" : fc(target_device),
+                        "service" : fc(target_service)}
                     
                     if not taf.is_filterable(fc(device_filter),
                                              target_field_dict) :

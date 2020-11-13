@@ -39,8 +39,6 @@ The following examples are forbidden :
 """
 
 
-import re
-
 class FilterKeywordSyntaxError(RuntimeError) :
     def __init__(self, keyword) :
         super().__init__(
@@ -58,57 +56,6 @@ class ParsingError(RuntimeError) :
         super().__init__(
             self, ("'keyword:value' format parsing error with '%s'"
                    % bad_string))
-
-
-
-DEVI_SERV_SEP_REG = re.compile("[:+]")
-
-def get_fields_from_devi_serv(devi_serv) :
-    global DEVI_SERV_SEP_REG
-    
-    token_list = re.split(DEVI_SERV_SEP_REG, devi_serv)
-    token_count = len(token_list)
-    field_dict = {}
-    
-    if token_count == 1 : # devi_serv string like : device
-        field_dict.update(
-            {"device" : devi_serv})
-    elif token_count == 2 : # devi_serv string like : device:service (or device+service)
-        device, service = token_list
- 
-        field_dict.update(
-            {"device" : device,
-             "service" : service})
-    else :
-        raise ValueError("device:service string badly formatted : '%s'"
-                         % devi_serv)
-    return field_dict
-
-        
-TARGET_SEP_REG = re.compile("[@]")
-    
-def get_target_field_dict(target) :
-    global TARGET_SEP_REG
-    
-    token_list = re.split(TARGET_SEP_REG, target)
-    token_count = len(token_list)
-    field_dict = {}
-    
-    if token_count == 2 : # target string like : account@device
-        account, devi_serv = token_list
-    
-        field_dict.update(
-            {"account" : account})
-    elif token_count == 3 : # target string like : account@domain@device
-        account, domain, devi_serv = token_list
-
-        field_dict.update(
-            {"account" : account,
-             "domain" : domain})
-    else :
-        raise ValueError("target string badly formatted : '%s'" % target)
-    field_dict.update(get_fields_from_devi_serv(devi_serv))
-    return field_dict
 
 
 

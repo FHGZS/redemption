@@ -1,50 +1,5 @@
 import unittest
-
 import targetaccuratefilter as taf
-
-class Test_get_target_field_dict(unittest.TestCase) :
-    def test_get_target_field_dict_with_good_target(self) :
-        def expect_dict_equal(target, target_field_dict_expected) :
-            with self.subTest(target = target) :
-                self.assertDictEqual(taf.get_target_field_dict(target),
-                                     target_field_dict_expected)
-
-        expect_dict_equal(
-            "my_account@my_domain@my_device:my_service",
-            {"account" : "my_account",
-            "domain" : "my_domain",
-            "device" : "my_device",
-            "service" : "my_service"})
-        expect_dict_equal(
-            "my_account@my_device+my_service",
-            {"account" : "my_account",
-            "device" : "my_device",
-            "service" : "my_service"})
-        expect_dict_equal(
-            "my_account@my_device",
-            {"account" : "my_account",
-            "device" : "my_device"}) 
-
-    def test_get_target_field_dict_with_bad_target(self) :
-        def expect_value_error(target) :
-            with self.subTest(target = target) :
-                self.assertRaises(ValueError, taf.get_target_field_dict, target)
-
-        expect_value_error(
-            "my_account@@my_domain@@my_device:my_service")
-        expect_value_error(
-            "my_account@my_domain@my_device@my_service")
-        expect_value_error(
-            "my_account@my_domain@my_device:my_service+my_service2:my_service3")
-        expect_value_error(
-            "my_account@my_domain@my_device++++++my_service")
-        expect_value_error(
-             "my_account+my_domain+my_device+my_service")
-        expect_value_error(
-             "my_account:my_domain:my_device:my_service")
-
-
-
 from targetaccuratefilter import (FilterKeywordSyntaxError,
                                   FilterKeywordDuplicateError,
                                   ParsingError)
