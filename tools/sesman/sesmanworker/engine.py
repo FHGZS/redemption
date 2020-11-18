@@ -45,6 +45,7 @@ except Exception:
         #               traceback.format_exc())
         Logger().info("WABENGINE LOADING FAILED>>>>>> %s" % tracelog)
 
+        
 from .logtime import logtime_function_pause
 import time
 import socket
@@ -57,6 +58,7 @@ from .checkout import (
     SHADOW_ACCEPTED,
     SHADOW_REJECTED,
 )
+from . import targetaccuratefilter as taf
 
 DEFAULT_CONF_DIR = "/var/wab/etc/"
 DEFAULT_SPEC_DIR = "/opt/wab/share/conf/"
@@ -628,8 +630,6 @@ class Engine(object):
                     continue
             else : # apply target accurate filter mode
                 try :
-                    from . import targetaccuratefilter as taf
-                    
                     target_login_domain = target_info.target_login.split('@')
                     target_login_real = target_login_domain[0]
                     target_domain_real = (target_login_domain[1]

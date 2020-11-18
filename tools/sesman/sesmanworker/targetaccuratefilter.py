@@ -58,21 +58,26 @@ class ParsingError(RuntimeError) :
                    % bad_string))
 
 
+        
+FILTER_KEYWORD_LIST = [
+    "account",
+    "domain",
+    "device",
+    "service"]
 
-def is_filter_keyword(filter_keyword) :
+FILTER_SEPARATOR = ','
+FILTER_KV_SEPARATOR = ':'
+
+
+def try_get_filter_keyword_no_prefix(filter_keyword) :
     if filter_keyword.startswith('$') :
         filter_keyword_no_prefix = filter_keyword[1:]
         
-        if (filter_keyword_no_prefix in ("account",
-                                         "domain",
-                                         "device",
-                                         "service")) :
-            return True, filter_keyword_no_prefix
-        return False, None
+        if filter_keyword_no_prefix in FILTER_KEYWORD_LIST :
+            return filter_keyword_no_prefix
+    return None
 
 def is_filterable(filter_patterns, target_field_dict) :
-    FILTER_SEPARATOR = ','
-    FILTER_KV_SEPARATOR = ':'
     filter_pattern_dict = {}
 
     for filter_kv in filter_patterns.split(FILTER_SEPARATOR) :
@@ -85,10 +90,11 @@ def is_filterable(filter_patterns, target_field_dict) :
         
         if not filter_value :
             raise ParsingError(filter_kv)
-    
-        res, filter_keyword_no_prefix = is_filter_keyword(filter_keyword)
+
+        filter_keyword_no_prefix = (
+            try_get_filter_keyword_no_prefix(filter_keyword))
         
-        if not res :
+        if not filter_keyword_no_prefix : 
             raise FilterKeywordSyntaxError(filter_keyword)
         if filter_keyword_no_prefix not in filter_pattern_dict :
             filter_pattern_dict[
